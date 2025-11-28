@@ -25,7 +25,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
-    private String password; // Para producción: encriptar con BCrypt
+    private String password;
 
     @Column(nullable = false)
     private String rut;

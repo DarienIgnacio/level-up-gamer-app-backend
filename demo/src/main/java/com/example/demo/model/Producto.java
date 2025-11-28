@@ -1,4 +1,4 @@
-package com.example.levelupgamerapi.model;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +13,7 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // En Android es Int, lo puedes mapear sin problema
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;
@@ -22,9 +22,9 @@ public class Producto {
     private String descripcion;
 
     @Column(nullable = false)
-    private int precio; // En CLP
+    private int precio;
 
-    private String imagen; // nombre de archivo o URL
+    private String imagen;
 
     @Column(nullable = false)
     private String categoria;
