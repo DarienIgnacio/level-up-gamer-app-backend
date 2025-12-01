@@ -30,6 +30,6 @@ public class Usuario {
     @Column(nullable = false)
     private String rut;
 
-    @Column(nullable = false)
+    @Column(name = "es_admin", nullable = false)
     private boolean esAdmin;
 }
