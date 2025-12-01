@@ -5,7 +5,7 @@ import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -24,7 +24,6 @@ public class UsuarioService {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        // Guardar usuario
         return usuarioRepository.save(usuario);
     }
 
@@ -47,8 +46,13 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
     }
 
-    // Listar todos los usuarios (si lo necesitas)
-    public Iterable<Usuario> listar() {
+    // Listar todos los usuarios
+    public List<Usuario> listar() {
         return usuarioRepository.findAll();
+    }
+
+    // Alias para el controller, si prefieres el nombre "obtenerUsuarios"
+    public List<Usuario> obtenerUsuarios() {
+        return listar();
     }
 }
