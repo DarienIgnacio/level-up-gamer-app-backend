@@ -27,7 +27,7 @@ public class ProductoService {
             int precio,
             String categoria,
             int stock,
-            MultipartFile imagen
+            String imagen
     ) {
         Producto p = new Producto();
         p.setNombre(nombre);
@@ -35,11 +35,7 @@ public class ProductoService {
         p.setPrecio(precio);
         p.setCategoria(categoria);
         p.setStock(stock);
-
-        if (imagen != null && !imagen.isEmpty()) {
-            String fileName = fileStorage.storeFile(imagen);
-            p.setImagen(fileName);
-        }
+        p.setImagen(imagen);
 
         return repo.save(p);
     }
