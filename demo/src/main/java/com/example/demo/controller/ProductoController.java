@@ -42,7 +42,7 @@ public class ProductoController {
             @RequestParam("precio") int precio,
             @RequestParam("categoria") String categoria,
             @RequestParam("stock") int stock,
-            @RequestPart(value = "imagen", required = false) MultipartFile imagen
+            @RequestPart(value = "imagen", required = false) String imagen
     ) {
         Producto creado = productoService.crearProducto(
                 nombre, descripcion, precio, categoria, stock, imagen
