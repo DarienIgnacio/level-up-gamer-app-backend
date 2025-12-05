@@ -14,30 +14,9 @@ import java.util.List;
 public class ProductoService {
 
     private final ProductoRepository repo;
-    private final FileStorageService fileStorage;
 
-    public ProductoService(ProductoRepository repo, FileStorageService fileStorage) {
+    public ProductoService(ProductoRepository repo) {
         this.repo = repo;
-        this.fileStorage = fileStorage;
-    }
-
-    public Producto crearProducto(
-            String nombre,
-            String descripcion,
-            int precio,
-            String categoria,
-            int stock,
-            String imagen
-    ) {
-        Producto p = new Producto();
-        p.setNombre(nombre);
-        p.setDescripcion(descripcion);
-        p.setPrecio(precio);
-        p.setCategoria(categoria);
-        p.setStock(stock);
-        p.setImagen(imagen);
-
-        return repo.save(p);
     }
 
     public List<Producto> listarTodos() {
@@ -46,41 +25,29 @@ public class ProductoService {
 
     public Producto obtenerPorId(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
     }
 
-    public Producto actualizarProducto(
-            Long id,
-            String nombre,
-            String descripcion,
-            int precio,
-            String categoria,
-            int stock,
-            MultipartFile imagen
-    ) {
-        Producto existing = obtenerPorId(id);
-        existing.setNombre(nombre);
-        existing.setDescripcion(descripcion);
-        existing.setPrecio(precio);
-        existing.setCategoria(categoria);
-        existing.setStock(stock);
+    public Producto crearProducto(Producto p) {
+        // Aquí la imagen ya viene como String URL
+        return repo.save(p);
+    }
 
-        if (imagen != null && !imagen.isEmpty()) {
-            if (existing.getImagen() != null) {
-                fileStorage.deleteFile(existing.getImagen());
-            }
-            String fileName = fileStorage.storeFile(imagen);
-            existing.setImagen(fileName);
-        }
+    public Producto actualizarProducto(Long id, Producto datos) {
+        Producto existing = obtenerPorId(id);
+
+        existing.setNombre(datos.getNombre());
+        existing.setDescripcion(datos.getDescripcion());
+        existing.setPrecio(datos.getPrecio());
+        existing.setCategoria(datos.getCategoria());
+        existing.setStock(datos.getStock());
+        existing.setImagen(datos.getImagen()); // URL directa
 
         return repo.save(existing);
     }
 
     public void eliminarProducto(Long id) {
         Producto existing = obtenerPorId(id);
-        if (existing.getImagen() != null) {
-            fileStorage.deleteFile(existing.getImagen());
-        }
         repo.delete(existing);
     }
 }

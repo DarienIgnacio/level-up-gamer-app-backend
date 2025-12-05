@@ -14,15 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "*") // para permitir llamadas desde Android/Emulador
+@CrossOrigin(origins = "*")
 public class ProductoController {
 
     private final ProductoService productoService;
-    private final FileStorageService fileStorage;
 
-    public ProductoController(ProductoService productoService, FileStorageService fileStorage) {
+    public ProductoController(ProductoService productoService) {
         this.productoService = productoService;
-        this.fileStorage = fileStorage;
     }
 
     @GetMapping
@@ -35,36 +33,20 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.obtenerPorId(id));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Producto> crear(
-            @RequestParam("nombre") String nombre,
-            @RequestParam("descripcion") String descripcion,
-            @RequestParam("precio") int precio,
-            @RequestParam("categoria") String categoria,
-            @RequestParam("stock") int stock,
-            @RequestPart(value = "imagen", required = false) String imagen
-    ) {
-        Producto creado = productoService.crearProducto(
-                nombre, descripcion, precio, categoria, stock, imagen
-        );
+    @PostMapping
+    public ResponseEntity<Producto> crear(@RequestBody Producto producto) {
+        Producto creado = productoService.crearProducto(producto);
         return ResponseEntity
                 .created(URI.create("/api/productos/" + creado.getId()))
                 .body(creado);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizar(
             @PathVariable Long id,
-            @RequestParam("nombre") String nombre,
-            @RequestParam("descripcion") String descripcion,
-            @RequestParam("precio") int precio,
-            @RequestParam("categoria") String categoria,
-            @RequestParam("stock") int stock,
-            @RequestPart(value = "imagen", required = false) MultipartFile imagen
+            @RequestBody Producto producto
     ) {
-        Producto actualizado = productoService.actualizarProducto(
-                id, nombre, descripcion, precio, categoria, stock, imagen
-        );
+        Producto actualizado = productoService.actualizarProducto(id, producto);
         return ResponseEntity.ok(actualizado);
     }
 
@@ -73,16 +55,5 @@ public class ProductoController {
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/imagenes/{filename:.+}")
-    public ResponseEntity<Resource> servirImagen(@PathVariable String filename) {
-        Resource resource = fileStorage.loadFileAsResource(filename);
-        String contentType = "application/octet-stream";
-        try {
-            contentType = Files.probeContentType(resource.getFile().toPath());
-        } catch (Exception ignored) {}
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(resource);
-    }
 }
+
