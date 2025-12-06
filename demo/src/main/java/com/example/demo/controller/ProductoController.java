@@ -1,20 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ProductoDto;
 import com.example.demo.model.Producto;
-import com.example.demo.service.FileStorageService;
 import com.example.demo.service.ProductoService;
-import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
-import java.nio.file.Files;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/productos")
-@CrossOrigin(origins = "*")
+@RequestMapping("/productos")
+@CrossOrigin("*")
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -24,36 +18,20 @@ public class ProductoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Producto>> listarTodos() {
-        return ResponseEntity.ok(productoService.listarTodos());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerUno(@PathVariable Long id) {
-        return ResponseEntity.ok(productoService.obtenerPorId(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<Producto> crear(@RequestBody Producto producto) {
-        Producto creado = productoService.crearProducto(producto);
-        return ResponseEntity
-                .created(URI.create("/api/productos/" + creado.getId()))
-                .body(creado);
+    public ResponseEntity<?> obtenerTodos() {
+        return ResponseEntity.ok(productoService.obtenerTodos());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizar(
+    public ResponseEntity<?> actualizarProducto(
             @PathVariable Long id,
-            @RequestBody Producto producto
+            @RequestBody ProductoDto dto
     ) {
-        Producto actualizado = productoService.actualizarProducto(id, producto);
-        return ResponseEntity.ok(actualizado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        productoService.eliminarProducto(id);
-        return ResponseEntity.noContent().build();
+        try {
+            Producto actualizado = productoService.actualizarProducto(id, dto);
+            return ResponseEntity.ok(actualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error actualizando producto: " + e.getMessage());
+        }
     }
 }
-

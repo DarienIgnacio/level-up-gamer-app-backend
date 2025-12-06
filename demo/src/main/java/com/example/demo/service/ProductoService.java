@@ -1,53 +1,34 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.dto.ProductoDto;
 import com.example.demo.model.Producto;
 import com.example.demo.repository.ProductoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
-@Transactional
 public class ProductoService {
 
-    private final ProductoRepository repo;
+    private final ProductoRepository productoRepository;
 
-    public ProductoService(ProductoRepository repo) {
-        this.repo = repo;
+    public ProductoService(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
     }
 
-    public List<Producto> listarTodos() {
-        return repo.findAll();
+    public Iterable<Producto> obtenerTodos() {
+        return productoRepository.findAll();
     }
 
-    public Producto obtenerPorId(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-    }
+    public Producto actualizarProducto(Long id, ProductoDto dto) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id " + id));
 
-    public Producto crearProducto(Producto p) {
-        // Aquí la imagen ya viene como String URL
-        return repo.save(p);
-    }
+        producto.setNombre(dto.nombre);
+        producto.setDescripcion(dto.descripcion);
+        producto.setPrecio(dto.precio);
+        producto.setImagen(dto.imagen);
+        producto.setCategoria(dto.categoria);
+        producto.setstock(dto.stock);
 
-    public Producto actualizarProducto(Long id, Producto datos) {
-        Producto existing = obtenerPorId(id);
-
-        existing.setNombre(datos.getNombre());
-        existing.setDescripcion(datos.getDescripcion());
-        existing.setPrecio(datos.getPrecio());
-        existing.setCategoria(datos.getCategoria());
-        existing.setStock(datos.getStock());
-        existing.setImagen(datos.getImagen()); // URL directa
-
-        return repo.save(existing);
-    }
-
-    public void eliminarProducto(Long id) {
-        Producto existing = obtenerPorId(id);
-        repo.delete(existing);
+        return productoRepository.save(producto);
     }
 }
