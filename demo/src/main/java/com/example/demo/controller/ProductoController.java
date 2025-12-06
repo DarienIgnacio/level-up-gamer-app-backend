@@ -23,7 +23,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.listarProductos());
     }
 
-    @GetMapping("/api/productos/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
 
         Optional<Producto> resultado = productoService.obtenerPorId(id);
@@ -40,7 +40,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.guardarProducto(producto));
     }
 
-    @PutMapping("/api/productos/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> actualizarProducto(
             @PathVariable Long id,
             @RequestBody Producto datosActualizados) {
@@ -53,7 +53,7 @@ public class ProductoController {
         }
     }
 
-    @PutMapping("/api/productos/{id}/stock")
+    @PutMapping("/{id}/stock")
     public ResponseEntity<?> actualizarStock(
             @PathVariable Long id,
             @RequestParam int stock) {
@@ -70,7 +70,7 @@ public class ProductoController {
         }
     }
 
-    @DeleteMapping("/api/productos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
 
         Optional<Producto> resultado = productoService.obtenerPorId(id);
