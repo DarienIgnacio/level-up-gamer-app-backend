@@ -1,35 +1,77 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
-@Table(name = "producto")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String nombre;
-
-    @Column(nullable = false, length = 1000)
     private String descripcion;
-
-    @Column(nullable = false)
     private int precio;
-
-    @Column(nullable = true)
     private String imagen;
-
-    @Column(nullable = false)
     private String categoria;
-
-    @Column(nullable = false)
     private int stock;
+
+    public Producto() {
+    }
+
+    public Producto(Long id, String nombre, String descripcion, int precio, String imagen, String categoria, int stock) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.imagen = imagen;
+        this.categoria = categoria;
+        this.stock = stock;
+    }
+
+    // GETTERS
+    public Long getId() {
+        return id;
+    }
+    public String getNombre() {
+        return nombre;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public int getPrecio() {
+        return precio;
+    }
+    public String getImagen() {
+        return imagen;
+    }
+    public String getCategoria() {
+        return categoria;
+    }
+    public int getStock() {
+        return stock;
+    }
+
+    // SETTERS
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 }
