@@ -21,7 +21,7 @@ public class ProductoService {
 
     // Obtener uno
     public Optional<Producto> obtenerPorId(Long id) {
-    return productoRepository.findById(id);
+        return productoRepository.findById(id);
     }
 
     // Crear o guardar
@@ -42,7 +42,7 @@ public class ProductoService {
                     producto.setImagen(datosActualizados.getImagen());
                     producto.setCategoria(datosActualizados.getCategoria());
 
-                    // 🔥 AQUI FALLABA: método NO EXISTÍA
+                    // 🔥 ESTA ES LA CORRECCIÓN
                     producto.setStock(datosActualizados.getStock());
 
                     return productoRepository.save(producto);
