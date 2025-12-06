@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/productos")
+@RequestMapping("/api/productos")
 @CrossOrigin(origins = "*")
 public class ProductoController {
 
@@ -23,7 +23,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.listarProductos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/productos/{id}")
     public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
 
         Optional<Producto> resultado = productoService.obtenerPorId(id);
@@ -40,7 +40,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.guardarProducto(producto));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/productos/{id}")
     public ResponseEntity<?> actualizarProducto(
             @PathVariable Long id,
             @RequestBody Producto datosActualizados) {
@@ -53,7 +53,7 @@ public class ProductoController {
         }
     }
 
-    @PutMapping("/{id}/stock")
+    @PutMapping("/api/productos/{id}/stock")
     public ResponseEntity<?> actualizarStock(
             @PathVariable Long id,
             @RequestParam int stock) {
@@ -70,7 +70,7 @@ public class ProductoController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/productos/{id}")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
 
         Optional<Producto> resultado = productoService.obtenerPorId(id);
