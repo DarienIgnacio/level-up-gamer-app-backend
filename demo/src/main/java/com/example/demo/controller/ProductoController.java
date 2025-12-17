@@ -3,42 +3,41 @@ package com.example.demo.controller;
 import com.example.demo.model.Producto;
 import com.example.demo.service.ProductoService;
 import com.example.demo.repository.ProductoRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/productos")
 @CrossOrigin(origins = "*")
 public class ProductoController {
 
-    @Autowired
-    private ProductoService productoService;
+    private final ProductoService productoService;
     private final ProductoRepository productoRepository;
 
-    public ProductoController(ProductoRepository productoRepository) {
+    public ProductoController(
+            ProductoService productoService,
+            ProductoRepository productoRepository
+    ) {
+        this.productoService = productoService;
         this.productoRepository = productoRepository;
     }
+
+    // =========================
+    // CRUD ADMIN
+    // =========================
 
     @GetMapping
     public ResponseEntity<List<Producto>> listarProductos() {
         return ResponseEntity.ok(productoService.listarProductos());
     }
 
-    @GetMapping("/api/productos/{id}")
-    public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
-
-        Optional<Producto> resultado = productoService.obtenerPorId(id);
-
-        if (resultado.isPresent()) {
-            return ResponseEntity.ok(resultado.get());
-        } else {
-            return ResponseEntity.status(404).body("Producto no encontrado");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> obtenerProducto(@PathVariable Long id) {
+        return productoService.obtenerPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -46,48 +45,32 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.guardarProducto(producto));
     }
 
-    @PutMapping("/api/productos/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> actualizarProducto(
             @PathVariable Long id,
-            @RequestBody Producto datosActualizados) {
-
+            @RequestBody Producto datosActualizados
+    ) {
         try {
-            Producto actualizado = productoService.actualizarProducto(id, datosActualizados);
+            Producto actualizado =
+                    productoService.actualizarProducto(id, datosActualizados);
             return ResponseEntity.ok(actualizado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Producto no encontrado");
         }
     }
 
-    @PutMapping("/api/productos/{id}/stock")
-    public ResponseEntity<?> actualizarStock(
-            @PathVariable Long id,
-            @RequestParam int stock) {
-
-        Optional<Producto> resultado = productoService.obtenerPorId(id);
-
-        if (resultado.isPresent()) {
-            Producto p = resultado.get();
-            p.setStock(stock);
-            productoService.guardarProducto(p);
-            return ResponseEntity.ok(p);
-        } else {
-            return ResponseEntity.status(404).body("Producto no encontrado");
-        }
-    }
-
-    @DeleteMapping("/api/productos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
-
-        Optional<Producto> resultado = productoService.obtenerPorId(id);
-
-        if (resultado.isEmpty()) {
+        if (productoService.obtenerPorId(id).isEmpty()) {
             return ResponseEntity.status(404).body("Producto no encontrado");
         }
-
         productoService.eliminarProducto(id);
         return ResponseEntity.ok("Producto eliminado");
     }
+
+    // =========================
+    // COMPRA (USUARIO)
+    // =========================
 
     @PutMapping("/{id}/disminuir-stock")
     public ResponseEntity<?> disminuirStock(
@@ -109,5 +92,4 @@ public class ProductoController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }
