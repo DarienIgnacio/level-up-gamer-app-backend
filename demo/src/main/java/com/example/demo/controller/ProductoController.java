@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Producto;
 import com.example.demo.service.ProductoService;
+import com.example.demo.repository.ProductoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,11 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+    private final ProductoRepository productoRepository;
+
+    public ProductoController(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<Producto>> listarProductos() {
@@ -82,4 +88,26 @@ public class ProductoController {
         productoService.eliminarProducto(id);
         return ResponseEntity.ok("Producto eliminado");
     }
+
+    @PutMapping("/{id}/disminuir-stock")
+    public ResponseEntity<?> disminuirStock(
+            @PathVariable Long id,
+            @RequestParam int cantidad
+    ) {
+        return productoRepository.findById(id)
+                .map(producto -> {
+                    if (producto.getStock() < cantidad) {
+                        return ResponseEntity
+                                .badRequest()
+                                .body("Stock insuficiente");
+                    }
+
+                    producto.setStock(producto.getStock() - cantidad);
+                    productoRepository.save(producto);
+
+                    return ResponseEntity.ok(producto);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
